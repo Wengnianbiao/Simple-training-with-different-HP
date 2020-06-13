@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 batchsize = 8
 numworkers = 8
-numepoch = 10
+numepoch = 150
 dataroot = 'data10'  # datasets path.
 txt_name = dataroot+':'+str(numepoch)  # 保存training结果的txt文件名->根据不同训练任务进行更改->有助于识别
 print('device:',device)

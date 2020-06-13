@@ -34,7 +34,7 @@ class RetSAndV(object):
             with open(self.name_txt,'w') as f:
                 for key in self.dict_loss_acc:
                     # 使用切片操作不会引发异常
-                    f.write(str(key)+'='+str(self.dict_loss_acc[key])[1:-1]+'\n')
+                    f.write(str(key)+':'+str(self.dict_loss_acc[key])[1:-1]+'\n')
 
         except FileNotFoundError as e:
             raise e
@@ -53,8 +53,8 @@ class RetSAndV(object):
                 dict_lossacc = {}
                 with open(self.name_txt,'r') as f:
                     for line in f.readlines():
-                        value = list(map(float,line.split(':',1)[1].strip().split(',')))
-                        dict_lossacc[line.split(':',1)[0]] = value
+                        value = list(map(float,line.split('=',1)[1].strip().split(',')))
+                        dict_lossacc[line.split('=',1)[0]] = value
 
             # ploting
             fig = plt.figure(1)
@@ -64,12 +64,16 @@ class RetSAndV(object):
                     main_title += str(key)+':'+str(val)+' '
 
             x = np.arange(1,self.epoch+1).astype(dtype=np.str)
+
             ax1 = plt.subplot(211)
             plt.plot(x,dict_lossacc['train_loss'], color='green', marker='o', label='train_loss')
             plt.plot(x, dict_lossacc['test_loss'], color='red', marker='*', label='test_loss')
             ax1.set_title(main_title,fontsize=10)
             plt.xlabel('epoch')
             plt.legend()
+            # If epoch number is greater than 50,the x-coordinate is not displayed.
+            if self.epoch >= 50:
+                plt.xticks(())
 
             ax2 = plt.subplot(212)
             plt.plot(x,dict_lossacc['train_acc'], color='green', marker='o', label='train_acc')
@@ -78,7 +82,8 @@ class RetSAndV(object):
             plt.xlabel('epoch')
             plt.ylim(0.0,1.0)
             plt.legend()
-
+            if self.epoch >= 50:
+                plt.xticks(())
             plt.tight_layout()
             # Save figure
             fig_folder = os.path.join(self.cwdpath, 'figure')
@@ -90,6 +95,8 @@ class RetSAndV(object):
         # txt file does not exist.
         except FileNotFoundError as e:
             raise e
+        except IndexError as e:
+            raise e
         else:
             print('The graphics are finished successfully!')
         # keep the path the same after processing.
@@ -98,6 +105,6 @@ class RetSAndV(object):
 
 
 if __name__ == '__main__':
-    r = RetSAndV(25,'data10.txt')
+    r = RetSAndV(50,'data50.txt')
 
-    r.visualize_ret(epoch=25,bestacc=0.2,classes=10)
+    r.visualize_ret(epoch=50,classes=10)
